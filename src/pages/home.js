@@ -139,7 +139,7 @@ function Home() {
           <Card style={{ flexBasis: "45%", margin: 5 }}>
             <CardContent>
               <div className="analysis-content">
-                <h2>TOTAL TASKS</h2>
+                TOTAL TASKS
                 <div className="analysis-number">
                   {todoList && todoList.length > 0 ? todoList.length : 0}
                 </div>
@@ -149,7 +149,7 @@ function Home() {
           <Card style={{ flexBasis: "45%", margin: 5 }}>
             <CardContent>
               <div className="analysis-content">
-                <h2>PENDING TASKS</h2>
+                PENDING TASKS
                 <div className="analysis-number">
                   {todoList && todoList.length > 0
                     ? todoList.filter((x) => x.status == "Pending").length
@@ -161,7 +161,7 @@ function Home() {
           <Card style={{ flexBasis: "45%", margin: 5 }}>
             <CardContent>
               <div className="analysis-content">
-                <h2>COMPLETION PERCENTAGE</h2>
+                COMPLETION PERCENTAGE
                 <div className="analysis-number">
                   {todoList && todoList.length > 0
                     ? (todoList.filter((x) => x.status == "Completed").length /
