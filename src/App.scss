@@ -44,4 +44,31 @@
 
 .main {
   padding: 20px;
+  margin: 20px;
+}
+
+.delete-modal {
+  background-color:white;
+  margin:100px;
+  padding:15px;
+  border-width:2px;
+  border-color:red;
+  border-style:solid;
+}
+
+.analysis {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+
+.analysis-number {
+  font-size: 50px;
+  font-weight: bolder;
+
+}
+
+.analysis-content {
+  text-align:center;
+  padding: 5px;
 }

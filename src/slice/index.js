@@ -12,10 +12,6 @@ export const listSlice = createSlice({
   },
   reducers: {
     add: (state, action) => {
-      // Redux Toolkit allows us to write "mutating" logic in reducers. It
-      // doesn't actually mutate the state because it uses the Immer library,
-      // which detects changes to a "draft state" and produces a brand new
-      // immutable state based off those changes
       let newStateList = state.list;
       newStateList.push(action.payload);
       state.list = newStateList;
@@ -36,10 +32,23 @@ export const listSlice = createSlice({
       if (window !== "undefined")
         localStorage.setItem("list", JSON.stringify(newStateList));
     },
+    completed: (state, action) => {
+      let newStateList = state.list;
+      newStateList[action.payload].status="Completed";
+      state.list = newStateList;
+      if (window !== "undefined")
+        localStorage.setItem("list", JSON.stringify(newStateList));
+    },
+    pending: (state, action) => {
+      let newStateList = state.list;
+      newStateList[action.payload].status="Pending";
+      state.list = newStateList;
+      if (window !== "undefined")
+        localStorage.setItem("list", JSON.stringify(newStateList));
+    },
   },
 });
 
-// Action creators are generated for each case reducer function
-export const { add, update, deleteItem } = listSlice.actions;
+export const { add, update, deleteItem,completed,pending } = listSlice.actions;
 
 export default listSlice.reducer;

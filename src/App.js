@@ -17,7 +17,7 @@ function App() {
       <div className="App">
         <header className="App-header">
           <img src={logo} className="App-logo" alt="logo" />
-          <h3>My To-Do App</h3>
+          <h3>My ToDo App</h3>
         </header>
         <Routes>
           <Route exact path="/" element={<Home />}></Route>
