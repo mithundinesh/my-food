@@ -15,10 +15,6 @@ function App() {
   return (
     <Router>
       <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <h3>My ToDo App</h3>
-        </header>
         <Routes>
           <Route exact path="/" element={<Home />}></Route>
           <Route exact path="/create" element={<Create />}></Route>

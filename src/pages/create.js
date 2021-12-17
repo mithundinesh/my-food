@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import Update from "../components/update";
+import Update from "../components/Item";
 
 function Create() {
   const dispatch = useDispatch();

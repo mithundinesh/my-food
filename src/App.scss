@@ -6,13 +6,9 @@
 .App-logo {
   height: 10vmin;
   pointer-events: none;
+  margin: 5px;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
 
 .App-header {
   background-color: #282c34;
@@ -29,22 +25,13 @@
   color: #61dafb;
 }
 
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
 .table {
   margin: 15px;
 }
 
 .main {
-  padding: 20px;
-  margin: 20px;
+  // padding: 20px;
+  // margin: 20px;
 }
 
 .delete-modal {
@@ -59,7 +46,6 @@
 .analysis {
   display: flex;
   flex-direction: row;
-  flex-wrap: wrap;
 }
 
 .analysis-number {

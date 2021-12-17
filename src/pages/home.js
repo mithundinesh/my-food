@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { deleteItem, completed, pending } from "../slice";
 import Table from "@mui/material/Table";
@@ -17,192 +17,80 @@ import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
+import axios from "axios";
+import Tab from "@mui/material/Tab";
+import Tabs from "@mui/material/Tabs";
+import TabContext from "@mui/lab/TabContext";
+import TabList from "@mui/lab/TabList";
+import TabPanel from "@mui/lab/TabPanel";
+import Item from "../components/Item";
+
+function a11yProps(index) {
+  return {
+    id: `simple-tab-${index}`,
+    "aria-controls": `simple-tabpanel-${index}`,
+  };
+}
 
 function Home() {
   const todoList = useSelector((state) => state.list.list);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const [value, setValue] = React.useState(0);
+  const [restaurantName, setRestaurantName] = useState();
+  const [restaurantImg, setRestaurantImg] = useState();
+  const [menuList, setMenuList] = useState();
 
-  const [deleteModal, setDeleteModal] = useState(false);
-  const [deleteIndex, setDeleteIndex] = useState(null);
-  const [filter, setFilter] = useState(0);
-
+  useEffect(() => {
+    axios
+      .get("https://run.mocky.io/v3/a67edc87-49c7-4822-9cb4-e2ef94cb3099")
+      .then((res) => {
+        if (res.status == 200) {
+          console.log({res})
+          setRestaurantName(res.data[0].restaurant_name);
+          setRestaurantImg(res.data[0].restaurant_image);
+          setMenuList(res.data[0].table_menu_list);
+        }
+      });
+  }, []);
+  const handleChange = (event, newValue) => {
+    setValue(newValue);
+  };
+console.log({value})
   return (
     <div className="App">
+      <header className="App-header">
+        {restaurantName ? (
+          <h3 style={{ margin: 5 }}>{restaurantName}</h3>
+        ) : null}
+      </header>
       <main className="main">
-        <Button
-          onClick={() => navigate("/create")}
-          style={{ margin: 15 }}
-          variant="contained"
-        >
-          Create Task
-        </Button>
-        <FormControl style={{ width: 200 }}>
-          <InputLabel>Status</InputLabel>
-          <Select
-            value={filter}
-            label="Status"
-            onChange={(e) => {
-              setFilter(e.target.value);
-            }}
-          >
-            <MenuItem value={0}>All</MenuItem>
-            <MenuItem value={"Pending"}>Pending</MenuItem>
-            <MenuItem value={"Completed"}>Completed</MenuItem>
-          </Select>
-        </FormControl>
-        <TableContainer className="table" component={Paper}>
-          <Table size="small" aria-label="task table">
-            <TableHead>
-              <TableRow style={{ backgroundColor: "grey" }}>
-                <TableCell style={{ color: "white" }}>Title</TableCell>
-                <TableCell style={{ color: "white" }}>Desciption</TableCell>
-                <TableCell style={{ color: "white" }}>Status</TableCell>
-                <TableCell style={{ color: "white" }}>Actions</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {todoList && todoList.length > 0 ? (
-                todoList
-                  .filter((x) => {
-                    if (filter) return x.status == filter;
-                    else return true;
-                  })
-                  .map((row, index) => (
-                    <TableRow
-                      key={row.title}
-                      style={{
-                        backgroundColor:
-                          row.status === "Completed" ? "#7cf37c" : "white",
-                      }}
-                      sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-                    >
-                      <TableCell component="th" scope="row">
-                        {row.title}
-                      </TableCell>
-                      <TableCell>{row.description}</TableCell>
-                      <TableCell>{row.status}</TableCell>
-                      <TableCell>
-                        {" "}
-                        <Button
-                          style={{ margin: 5 }}
-                          variant="contained"
-                          onClick={() => {
-                            navigate("/edit/" + (index + 1));
-                          }}
-                        >
-                          Edit
-                        </Button>
-                        <Button
-                          style={{ backgroundColor: "red", margin: 5 }}
-                          variant="contained"
-                          onClick={() => {
-                            setDeleteModal(true);
-                            setDeleteIndex(index);
-                          }}
-                        >
-                          Delete
-                        </Button>
-                        {row.status == "Pending" ? (
-                          <Button
-                            style={{ backgroundColor: "green", margin: 5 }}
-                            variant="contained"
-                            onClick={() => {
-                              dispatch(completed(index));
-                            }}
-                          >
-                            Completed
-                          </Button>
-                        ) : (
-                          <Button
-                            style={{ backgroundColor: "#ff7600", margin: 5 }}
-                            variant="contained"
-                            onClick={() => {
-                              dispatch(pending(index));
-                            }}
-                          >
-                            Move to Pending
-                          </Button>
-                        )}
-                      </TableCell>
-                    </TableRow>
-                  ))
-              ) : (
-                <TableRow>
-                  <TableCell>No Task available</TableCell>
-                </TableRow>
-              )}
-            </TableBody>
-          </Table>
-        </TableContainer>
-        <div className="analysis">
-          <Card style={{ flexBasis: "45%", margin: 5 }}>
-            <CardContent>
-              <div className="analysis-content">
-                TOTAL TASKS
-                <div className="analysis-number">
-                  {todoList && todoList.length > 0 ? todoList.length : 0}
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-          <Card style={{ flexBasis: "45%", margin: 5 }}>
-            <CardContent>
-              <div className="analysis-content">
-                PENDING TASKS
-                <div className="analysis-number">
-                  {todoList && todoList.length > 0
-                    ? todoList.filter((x) => x.status == "Pending").length
-                    : 0}
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-          <Card style={{ flexBasis: "45%", margin: 5 }}>
-            <CardContent>
-              <div className="analysis-content">
-                COMPLETION PERCENTAGE
-                <div className="analysis-number">
-                  {todoList && todoList.length > 0
-                    ? (todoList.filter((x) => x.status == "Completed").length /
-                        todoList.length) *
-                        100 +
-                      "%"
-                    : "0%"}
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-      </main>
-      <Modal open={deleteModal} aria-labelledby="delete-confirmation-popup">
-        <div className="delete-modal">
-          <div>Are you sure, do you want to delete it?</div>
-          <div style={{ textAlign: "end" }}>
-            <Button
-              variant="contained"
-              onClick={() => {
-                setDeleteModal(false);
-                setDeleteIndex(null);
-              }}
-            >
-              Cancel
-            </Button>
-            <Button
-              style={{ backgroundColor: "red" }}
-              variant="contained"
-              onClick={() => {
-                if (deleteIndex !== null) {
-                  dispatch(deleteItem(deleteIndex));
-                  setDeleteModal(false);
-                  setDeleteIndex(null);
-                }
-              }}
-            >
-              Delete
-            </Button>
+        <TabContext value={value}>
+          <div style={{ borderBottom: 1, borderColor: "divider" }}>
+            <TabList variant="scrollable" onChange={handleChange} aria-label="lab API tabs example">
+              {menuList &&
+                menuList.length > 0 &&
+                menuList.map((e) => {
+                  return (
+                    <Tab
+                      value={e.menu_category_id}
+                      label={e.menu_category}
+                      {...a11yProps(0)}
+                    />
+                  );
+                })}
+            </TabList>
           </div>
-        </div>
+          {menuList &&
+            menuList.length > 0 &&
+            menuList.map((e) => {
+              return <TabPanel style={{padding:0}} value={e.menu_category_id}>{e.category_dishes && e.category_dishes.length>0 && e.category_dishes.map(d=>{
+                return(<Item item={d}/>)})}</TabPanel>;
+            })}
+        </TabContext>
+      </main>
+      <Modal open={false} aria-labelledby="delete-confirmation-popup">
+        <div className="delete-modal"></div>
       </Modal>
     </div>
   );
