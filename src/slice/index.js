@@ -1,54 +1,47 @@
 import { createSlice } from "@reduxjs/toolkit";
-let list = [];
+let cart = {};
 try {
   if (window !== "undefined") {
-    list = JSON.parse(localStorage.getItem("list", null));
+    cart = JSON.parse(localStorage.getItem("cart", null));
   }
 } catch (e) {}
-export const listSlice = createSlice({
+export const cartSlice = createSlice({
   name: "list",
-  initialState: {
-    list: list ?? [],
+  initialState: cart ?? {
+    cartNumber: 0,
+    cartList: {},
   },
   reducers: {
-    add: (state, action) => {
-      let newStateList = state.list;
-      newStateList.push(action.payload);
-      state.list = newStateList;
+    increment: (state, action) => {
+      let item = state.cartList[action.payload.id] ?? {
+        ...action.payload,
+        number: 0,
+      };
+      item.number = item.number + 1;
+      state.cartNumber = state.cartNumber + 1;
+      let newState = {
+        ...state,
+        cartList: { ...state.cartList, [action.payload.id]: item },
+      };
+      state.cartNumber = newState.cartNumber;
+      state.cartList = { ...newState.cartList };
       if (window !== "undefined")
-        localStorage.setItem("list", JSON.stringify(newStateList));
+        localStorage.setItem("cart", JSON.stringify(newState));
     },
-    update: (state,action) => {
-      let newStateList = state.list;
-      newStateList[action.payload.id]=action.payload.item;
-      state.list = newStateList;
+    decrement: (state, action) => {
+      state.cartList[action.payload.id].number =
+        state.cartList[action.payload.id].number - 1;
+      if (state.cartList[action.payload.id] == 0) {
+        delete state.cartList[action.payload.id];
+      }
+      state.cartNumber = state.cartNumber - 1;
+
       if (window !== "undefined")
-        localStorage.setItem("list", JSON.stringify(newStateList));
-    },
-    deleteItem: (state, action) => {
-      let newStateList = state.list;
-      newStateList.splice(action.payload,1);
-      state.list = newStateList;
-      if (window !== "undefined")
-        localStorage.setItem("list", JSON.stringify(newStateList));
-    },
-    completed: (state, action) => {
-      let newStateList = state.list;
-      newStateList[action.payload].status="Completed";
-      state.list = newStateList;
-      if (window !== "undefined")
-        localStorage.setItem("list", JSON.stringify(newStateList));
-    },
-    pending: (state, action) => {
-      let newStateList = state.list;
-      newStateList[action.payload].status="Pending";
-      state.list = newStateList;
-      if (window !== "undefined")
-        localStorage.setItem("list", JSON.stringify(newStateList));
+        localStorage.setItem("cart", JSON.stringify(state));
     },
   },
 });
 
-export const { add, update, deleteItem,completed,pending } = listSlice.actions;
+export const { increment, decrement } = cartSlice.actions;
 
-export default listSlice.reducer;
+export default cartSlice.reducer;

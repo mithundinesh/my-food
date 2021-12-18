@@ -8,8 +8,6 @@ import {
   Routes,
 } from "react-router-dom";
 import Home from "./pages/home";
-import Create from "./pages/create";
-import Edit from "./pages/edit";
 
 function App() {
   return (
@@ -17,8 +15,6 @@ function App() {
       <div className="App">
         <Routes>
           <Route exact path="/" element={<Home />}></Route>
-          <Route exact path="/create" element={<Create />}></Route>
-          <Route exact path="/edit/:id" element={<Edit />}></Route>
         </Routes>
       </div>
     </Router>

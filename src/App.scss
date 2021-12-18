@@ -11,22 +11,19 @@
 
 
 .App-header {
-  background-color: #282c34;
+  // background-color: #282c34;
   // min-height: 100vh;
   display: flex;
   flex-direction: row;
   align-items: center;
-  // justify-content: center;
+  justify-content: space-between;
   // font-size: calc(10px + 2vmin);
-  color: white;
+  padding: 20px;
+
 }
 
 .App-link {
   color: #61dafb;
-}
-
-.table {
-  margin: 15px;
 }
 
 .main {
@@ -34,29 +31,13 @@
   // margin: 20px;
 }
 
-.delete-modal {
-  background-color:white;
-  margin:100px;
-  padding:15px;
-  border-width:2px;
-  border-color:red;
-  border-style:solid;
-}
-
-.analysis {
+.card-content {
   display: flex;
   flex-direction: row;
 }
-
-.analysis-number {
-  font-size: 50px;
-  font-weight: bolder;
-
-}
-
-.analysis-content {
-  text-align:center;
-  padding: 5px;
-  font-weight: bold;
-  overflow: hidden;
+.update-btn {
+  background-color: transparent;
+  color:white;
+  border-width: 0px;
+  font-weight:bold;
 }

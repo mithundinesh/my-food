@@ -1,22 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { deleteItem, completed, pending } from "../slice";
-import Table from "@mui/material/Table";
-import TableBody from "@mui/material/TableBody";
-import TableCell from "@mui/material/TableCell";
-import TableContainer from "@mui/material/TableContainer";
-import TableHead from "@mui/material/TableHead";
-import TableRow from "@mui/material/TableRow";
-import Paper from "@mui/material/Paper";
-import Button from "@mui/material/Button";
-import Modal from "@mui/material/Modal";
-import { useNavigate } from "react-router-dom";
-import Select from "@mui/material/Select";
-import InputLabel from "@mui/material/InputLabel";
-import MenuItem from "@mui/material/MenuItem";
-import FormControl from "@mui/material/FormControl";
-import Card from "@mui/material/Card";
-import CardContent from "@mui/material/CardContent";
 import axios from "axios";
 import Tab from "@mui/material/Tab";
 import Tabs from "@mui/material/Tabs";
@@ -24,6 +7,9 @@ import TabContext from "@mui/lab/TabContext";
 import TabList from "@mui/lab/TabList";
 import TabPanel from "@mui/lab/TabPanel";
 import Item from "../components/Item";
+import ShoppingCartIcon from "@mui/icons-material/ShoppingCart";
+import Badge from "@mui/material/Badge";
+import CircularProgress from "@mui/material/CircularProgress";
 
 function a11yProps(index) {
   return {
@@ -33,41 +19,85 @@ function a11yProps(index) {
 }
 
 function Home() {
-  const todoList = useSelector((state) => state.list.list);
   const dispatch = useDispatch();
-  const navigate = useNavigate();
-  const [value, setValue] = React.useState(0);
-  const [restaurantName, setRestaurantName] = useState();
-  const [restaurantImg, setRestaurantImg] = useState();
   const [menuList, setMenuList] = useState();
+  const [value, setValue] = useState("0");
+  const [restaurantName, setRestaurantName] = useState();
+  const [loading, setLoading] = useState(false);
+  const cart = useSelector((state) => state.cart);
 
   useEffect(() => {
+    setLoading(true);
     axios
       .get("https://run.mocky.io/v3/a67edc87-49c7-4822-9cb4-e2ef94cb3099")
-      .then((res) => {
-        if (res.status == 200) {
-          console.log({res})
-          setRestaurantName(res.data[0].restaurant_name);
-          setRestaurantImg(res.data[0].restaurant_image);
-          setMenuList(res.data[0].table_menu_list);
+      .then(
+        (res) => {
+          if (res.status == 200) {
+            setRestaurantName(res.data[0].restaurant_name);
+            setMenuList(res.data[0].table_menu_list);
+            if (
+              res.data[0].table_menu_list &&
+              res.data[0].table_menu_list.length > 0
+            ) {
+              setValue(res.data[0].table_menu_list[0].menu_category_id);
+            }
+            setLoading(false);
+          }
+        },
+        (err) => {
+          setLoading(false);
+          alert("Something went wrong.");
         }
-      });
+      );
   }, []);
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
-console.log({value})
+  if (loading) {
+    return (
+      <div style={{ marginTop: 50, width: "100vw", textAlign: "center" }}>
+        <CircularProgress />
+      </div>
+    );
+  }
+
   return (
     <div className="App">
       <header className="App-header">
-        {restaurantName ? (
-          <h3 style={{ margin: 5 }}>{restaurantName}</h3>
-        ) : null}
+        <div>
+          {restaurantName ? (
+            <h3 style={{ margin: 5 }}>{restaurantName}</h3>
+          ) : null}
+        </div>
+        <div>
+          <a style={{ marginRight: 5 }}>My Orders</a>
+          <Badge
+            badgeContent={cart && cart.cartNumber ? cart.cartNumber : 0}
+            sx={{
+              "& .MuiBadge-badge": {
+                color: "white",
+                backgroundColor: "red",
+              },
+            }}
+          >
+            <ShoppingCartIcon style={{ color: "black" }} />
+          </Badge>
+        </div>
       </header>
       <main className="main">
         <TabContext value={value}>
           <div style={{ borderBottom: 1, borderColor: "divider" }}>
-            <TabList variant="scrollable" onChange={handleChange} aria-label="lab API tabs example">
+            <TabList
+              variant="scrollable"
+              onChange={handleChange}
+              aria-label="lab API tabs example"
+              TabIndicatorProps={{
+                sx: {
+                  backgroundColor: "red",
+                  color: "red",
+                },
+              }}
+            >
               {menuList &&
                 menuList.length > 0 &&
                 menuList.map((e) => {
@@ -84,14 +114,18 @@ console.log({value})
           {menuList &&
             menuList.length > 0 &&
             menuList.map((e) => {
-              return <TabPanel style={{padding:0}} value={e.menu_category_id}>{e.category_dishes && e.category_dishes.length>0 && e.category_dishes.map(d=>{
-                return(<Item item={d}/>)})}</TabPanel>;
+              return (
+                <TabPanel style={{ padding: 0 }} value={e.menu_category_id}>
+                  {e.category_dishes &&
+                    e.category_dishes.length > 0 &&
+                    e.category_dishes.map((d) => {
+                      return <Item item={d} />;
+                    })}
+                </TabPanel>
+              );
             })}
         </TabContext>
       </main>
-      <Modal open={false} aria-labelledby="delete-confirmation-popup">
-        <div className="delete-modal"></div>
-      </Modal>
     </div>
   );
 }
